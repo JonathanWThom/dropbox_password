@@ -19,17 +19,20 @@ class Password
     cipher = OpenSSL::Cipher::AES256.new(:CBC)
     cipher.encrypt
     cipher.key = PEPPER 
+    iv = cipher.random_iv
     encrypted = cipher.update(crypted) + cipher.final
 
-    Base64.encode64(encrypted)
+    [Base64.encode64(encrypted), Base64.encode64(iv)]
   end
 
-  def match?(stored)
+  def match?(stored, iv)
     decoded = Base64.decode64(stored)
+    decoded_iv = Base64.decode64(iv)
 
     decipher = OpenSSL::Cipher::AES256.new(:CBC)
     decipher.decrypt
     decipher.key = PEPPER 
+    decipher.iv = decoded_iv
     decrypted = decipher.update(decoded) + decipher.final
 
     BCrypt::Password.new(decrypted) == Digest::SHA512.hexdigest(input)
