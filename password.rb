@@ -3,7 +3,7 @@ require "base64"
 
 class Password
   # SecureRandom.bytes(128)
-  # Store elsewhere
+  # Store elsewhere. This is just an example.
   PEPPER = "1803de1949b7ca7a4e8dec8901008a81" 
 
   attr_reader :input
@@ -34,6 +34,4 @@ class Password
 
     BCrypt::Password.new(decrypted) == Digest::SHA512.hexdigest(input)
   end
-
-  private
 end
